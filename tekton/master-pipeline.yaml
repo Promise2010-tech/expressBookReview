@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: express-book-pipeline
+spec:
+  workspaces:
+    - name: shared-workspace
+  tasks:
+    - name: test-stage
+      taskRef:
+        name: run-jasmine-tests
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+    - name: build-and-deploy-stage
+      runAfter:
+        - test-stage
+      taskRef:
+        name: build-and-push-image
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: image-tag
+          value: "us.icr.io/book-review-namespace/expressbookreview:latest"

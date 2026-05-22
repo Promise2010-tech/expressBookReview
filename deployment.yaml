@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express-book-deployment
+  labels:
+    app: book-review
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-review
+  template:
+    metadata:
+      labels:
+        app: book-review
+    spec:
+      containers:
+      - name: book-review-app
+        image: us.icr.io/book-review-namespace/expressbookreview:latest
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: express-book-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5000
+    targetPort: 5000
+  selector:
+    app: book-review
